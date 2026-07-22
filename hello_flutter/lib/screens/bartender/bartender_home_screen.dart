@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
 import '../../widgets/api_key_dialog.dart';
+import '../../widgets/theme_mode_menu_button.dart';
 import '../login_screen.dart';
 import 'manage_drinks_screen.dart';
 import 'ai_recipe_screen.dart';
@@ -66,6 +67,7 @@ class _BartenderHomeScreenState extends State<BartenderHomeScreen> {
           ],
         ),
         actions: [
+          const ThemeModeMenuButton(),
           IconButton(
             icon: Icon(Icons.key, color: cs.onSurface.withValues(alpha: 0.5)),
             tooltip: 'API Key',

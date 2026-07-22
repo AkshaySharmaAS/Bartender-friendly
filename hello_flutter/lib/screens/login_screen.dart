@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/user.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/theme_mode_menu_button.dart';
 import 'customer/customer_home_screen.dart';
 import 'bartender/bartender_home_screen.dart';
 import 'admin/admin_home_screen.dart';
@@ -104,6 +105,11 @@ class _LoginScreenState extends State<LoginScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                const Align(
+                  alignment: Alignment.centerRight,
+                  child: ThemeModeMenuButton(),
+                ),
+                const SizedBox(height: 12),
                 const SizedBox(height: 30),
                 // Logo
                 Container(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import '../models/drink.dart';
@@ -9,6 +10,7 @@ class StorageService {
   static const _drinksKey = 'drinks';
   static const _requestsKey = 'requests';
   static const _groqApiKeyKey = 'groq_api_key';
+  static const _themeModeKey = 'theme_mode';
   static const _drinksVersionKey = 'drinks_version';
   static const _drinksVersion = 'v2'; // bump to force re-seed with new images
   static const _initializedKey = 'initialized';
@@ -119,6 +121,23 @@ class StorageService {
   Future<void> saveGroqApiKey(String key) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_groqApiKeyKey, key);
+  }
+
+  // ─── Theme mode ──────────────────────────────────────────────────────────
+
+  Future<ThemeMode?> getThemeMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_themeModeKey);
+    if (raw == null) return null;
+    return ThemeMode.values.firstWhere(
+      (mode) => mode.name == raw,
+      orElse: () => ThemeMode.system,
+    );
+  }
+
+  Future<void> saveThemeMode(ThemeMode mode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_themeModeKey, mode.name);
   }
 
   // ─── Init flag ───────────────────────────────────────────────────────────

@@ -1,17 +1,40 @@
-# hello_flutter
+# BarAI
 
-A new Flutter project.
+BarAI is a Flutter chat and menu app for a cocktail bar with three login modes: customer, bartender, and admin.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Customer browsing for cocktails and mocktails
+- Bartender AI-assisted recipe creation using Groq
+- Save AI-generated recipes with a name suggestion
+- Admin management for bartenders and drinks
+- Light, dark, and system theme switching
+- Drink images and responsive cards
 
-A few resources to get you started if this is your first Flutter project:
+## Running locally
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+1. Install Flutter.
+2. Run `flutter pub get`.
+3. Start the app with `flutter run`.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Default demo accounts
+
+- Customer: `customer@bar.com` / `cust123`
+- Bartender: `bartender@bar.com` / `bar123`
+- Admin: `admin@bar.com` / `admin123`
+
+## Groq API key
+
+Add your Groq API key from the in-app API key dialog. The key is stored locally on the device.
+
+## Theme switching
+
+Use the theme button in the top bar to switch between:
+
+- System theme
+- Light theme
+- Dark theme
+
+## Contributing
+
+Fork the repo, create a focused branch, and open a pull request with a clear summary and screenshots when UI changes are involved.

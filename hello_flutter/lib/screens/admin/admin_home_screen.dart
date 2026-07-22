@@ -4,6 +4,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/drink_provider.dart';
 import '../../providers/user_management_provider.dart';
 import '../../widgets/api_key_dialog.dart';
+import '../../widgets/theme_mode_menu_button.dart';
 import '../login_screen.dart';
 import 'manage_bartenders_screen.dart';
 import 'admin_drinks_screen.dart';
@@ -67,6 +68,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ],
         ),
         actions: [
+          const ThemeModeMenuButton(),
           IconButton(
             icon: Icon(Icons.key, color: cs.onSurface.withValues(alpha: 0.5)),
             tooltip: 'API Key',
