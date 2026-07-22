@@ -36,6 +36,8 @@ class _DrinksMenuScreenState extends State<DrinksMenuScreen>
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         // Search bar
@@ -43,27 +45,21 @@ class _DrinksMenuScreenState extends State<DrinksMenuScreen>
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: TextField(
             controller: _searchCtrl,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: cs.onSurface),
             onChanged: (v) => setState(() => _searchQuery = v),
             decoration: InputDecoration(
               hintText: 'Search drinks...',
-              hintStyle: const TextStyle(color: Colors.white38),
-              prefixIcon: const Icon(Icons.search, color: Colors.white38),
+              prefixIcon: Icon(Icons.search, color: cs.onSurface.withValues(alpha: 0.4)),
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear, color: Colors.white38),
+                      icon: Icon(Icons.clear,
+                          color: cs.onSurface.withValues(alpha: 0.4)),
                       onPressed: () {
                         _searchCtrl.clear();
                         setState(() => _searchQuery = '');
                       },
                     )
                   : null,
-              filled: true,
-              fillColor: Colors.white.withValues(alpha: 0.06),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide.none,
-              ),
             ),
           ),
         ),

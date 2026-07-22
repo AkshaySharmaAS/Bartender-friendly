@@ -92,8 +92,10 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D1A),
       body: FadeTransition(
         opacity: _fadeAnim,
         child: SafeArea(
@@ -103,54 +105,59 @@ class _LoginScreenState extends State<LoginScreen>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 30),
-                // Logo / branding
+                // Logo
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 84,
+                  height: 84,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF7B1FA2), Color(0xFF4A148C)],
+                    gradient: LinearGradient(
+                      colors: [cs.primary, cs.primary.withValues(alpha: 0.75)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF7B1FA2).withValues(alpha: 0.4),
-                        blurRadius: 24,
+                        color: cs.primary.withValues(alpha: 0.35),
+                        blurRadius: 28,
                         spreadRadius: 2,
                       )
                     ],
                   ),
                   child: const Center(
-                    child: Text('🍸', style: TextStyle(fontSize: 36)),
+                    child: Text('🍸', style: TextStyle(fontSize: 38)),
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'BarAI',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: cs.onSurface,
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.5,
                   ),
                 ),
-                const Text(
+                Text(
                   'Your AI-powered cocktail bar',
-                  style: TextStyle(color: Colors.white54, fontSize: 14),
+                  style: TextStyle(
+                    color: cs.onSurface.withValues(alpha: 0.5),
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 40),
 
                 // Role selector
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'Login as',
                     style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600),
+                      color: cs.onSurface.withValues(alpha: 0.6),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.3,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -159,8 +166,7 @@ class _LoginScreenState extends State<LoginScreen>
                       .map((role) => Expanded(
                             child: Padding(
                               padding: EdgeInsets.only(
-                                  right:
-                                      role == UserRole.admin ? 0 : 8),
+                                  right: role == UserRole.admin ? 0 : 8),
                               child: _RoleButton(
                                 role: role,
                                 selected: _selectedRole == role,
@@ -186,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen>
                             ? 'Enter your email'
                             : null,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
                       _buildTextField(
                         controller: _passwordCtrl,
                         label: 'Password',
@@ -197,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen>
                             _obscurePassword
                                 ? Icons.visibility_off
                                 : Icons.visibility,
-                            color: Colors.white38,
+                            color: cs.onSurface.withValues(alpha: 0.4),
                             size: 20,
                           ),
                           onPressed: () => setState(
@@ -221,21 +227,21 @@ class _LoginScreenState extends State<LoginScreen>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
+                          color: cs.error.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                              color: Colors.red.withValues(alpha: 0.4)),
+                              color: cs.error.withValues(alpha: 0.4)),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.error_outline,
-                                color: Colors.red, size: 18),
+                            Icon(Icons.error_outline,
+                                color: cs.error, size: 18),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 auth.error!,
-                                style: const TextStyle(
-                                    color: Colors.red, fontSize: 13),
+                                style: TextStyle(
+                                    color: cs.error, fontSize: 13),
                               ),
                             ),
                           ],
@@ -245,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen>
                   },
                 ),
 
-                const SizedBox(height: 28),
+                const SizedBox(height: 26),
 
                 // Login button
                 Consumer<AuthProvider>(
@@ -255,55 +261,44 @@ class _LoginScreenState extends State<LoginScreen>
                       height: 52,
                       child: ElevatedButton(
                         onPressed: auth.isLoading ? null : _login,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF7B1FA2),
-                          disabledBackgroundColor:
-                              const Color(0xFF7B1FA2).withValues(alpha: 0.5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          elevation: 8,
-                          shadowColor:
-                              const Color(0xFF7B1FA2).withValues(alpha: 0.4),
-                        ),
                         child: auth.isLoading
-                            ? const CircularProgressIndicator(
-                                color: Colors.white, strokeWidth: 2)
-                            : const Text(
-                                'Sign In',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                            ? SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                    color: cs.onPrimary, strokeWidth: 2),
+                              )
+                            : const Text('Sign In'),
                       ),
                     );
                   },
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 22),
                 // Demo hint
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.04),
-                    borderRadius: BorderRadius.circular(12),
-                    border:
-                        Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    color: isDark
+                        ? cs.surfaceVariant.withValues(alpha: 0.5)
+                        : cs.surfaceVariant,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: cs.outline),
                   ),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         '🎯 Demo Credentials',
                         style: TextStyle(
-                            color: Colors.white70,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13),
+                          color: cs.onSurface.withValues(alpha: 0.7),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
                       ),
                       const SizedBox(height: 8),
-                      _credRow('Customer', 'customer@bar.com', 'cust123'),
-                      _credRow('Bartender', 'bartender@bar.com', 'bar123'),
-                      _credRow('Admin', 'admin@bar.com', 'admin123'),
+                      _credRow(context, 'Customer', 'customer@bar.com', 'cust123'),
+                      _credRow(context, 'Bartender', 'bartender@bar.com', 'bar123'),
+                      _credRow(context, 'Admin', 'admin@bar.com', 'admin123'),
                     ],
                   ),
                 ),
@@ -316,23 +311,26 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget _credRow(String role, String email, String pwd) {
+  Widget _credRow(BuildContext context, String role, String email, String pwd) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
           SizedBox(
-              width: 72,
-              child: Text(role,
-                  style:
-                      const TextStyle(color: Colors.white54, fontSize: 12))),
+            width: 72,
+            child: Text(role,
+                style: TextStyle(
+                    color: cs.onSurface.withValues(alpha: 0.55), fontSize: 12)),
+          ),
           Expanded(
-              child: Text(email,
-                  style:
-                      const TextStyle(color: Colors.white38, fontSize: 11))),
+            child: Text(email,
+                style: TextStyle(
+                    color: cs.onSurface.withValues(alpha: 0.4), fontSize: 11)),
+          ),
           Text(pwd,
-              style:
-                  const TextStyle(color: Colors.white38, fontSize: 11)),
+              style: TextStyle(
+                  color: cs.onSurface.withValues(alpha: 0.4), fontSize: 11)),
         ],
       ),
     );
@@ -347,35 +345,18 @@ class _LoginScreenState extends State<LoginScreen>
     TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
+    final cs = Theme.of(context).colorScheme;
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: cs.onSurface),
       validator: validator,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white54),
-        prefixIcon: Icon(icon, color: Colors.white38, size: 20),
+        prefixIcon: Icon(icon, size: 20,
+            color: cs.onSurface.withValues(alpha: 0.4)),
         suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.06),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF7B1FA2), width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red),
-        ),
       ),
     );
   }
@@ -405,26 +386,23 @@ class _RoleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: selected
-              ? const Color(0xFF7B1FA2)
-              : Colors.white.withValues(alpha: 0.05),
+          color: selected ? cs.primary : cs.surfaceVariant,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selected
-                ? const Color(0xFF7B1FA2)
-                : Colors.white.withValues(alpha: 0.15),
+            color: selected ? cs.primary : cs.outline,
           ),
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: const Color(0xFF7B1FA2).withValues(alpha: 0.4),
-                    blurRadius: 12,
+                    color: cs.primary.withValues(alpha: 0.35),
+                    blurRadius: 14,
                   )
                 ]
               : [],
@@ -437,9 +415,9 @@ class _RoleButton extends StatelessWidget {
             Text(
               role.displayName,
               style: TextStyle(
-                color: selected ? Colors.white : Colors.white54,
+                color: selected ? cs.onPrimary : cs.onSurface.withValues(alpha: 0.55),
                 fontSize: 11,
-                fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.normal,
               ),
             ),
           ],

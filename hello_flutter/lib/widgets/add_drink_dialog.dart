@@ -130,18 +130,14 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
     Navigator.pop(context);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${drink.name} added to menu!'),
-        backgroundColor: const Color(0xFF7B1FA2),
-      ),
+      SnackBar(content: Text('${drink.name} added to menu! 🍹')),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Dialog(
-      backgroundColor: const Color(0xFF1E1E2E),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.all(16),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -152,19 +148,17 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
             children: [
               Row(
                 children: [
-                  const Text('🍹',
-                      style: TextStyle(fontSize: 24)),
+                  const Text('🍹', style: TextStyle(fontSize: 24)),
                   const SizedBox(width: 8),
-                  const Text(
-                    'Add New Drink',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
+                  Text('Add New Drink',
+                      style: TextStyle(
+                          color: cs.onSurface,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold)),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white54),
+                    icon: Icon(Icons.close,
+                        color: cs.onSurface.withValues(alpha: 0.5)),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -204,16 +198,16 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
                   ElevatedButton.icon(
                     onPressed: _isGenerating ? null : _generateWithAI,
                     icon: _isGenerating
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 14,
                             height: 14,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white))
+                                strokeWidth: 2, color: cs.onPrimary))
                         : const Icon(Icons.auto_awesome, size: 16),
                     label: const Text('AI', style: TextStyle(fontSize: 12)),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4A148C),
-                      foregroundColor: Colors.white,
+                      backgroundColor: cs.primaryContainer,
+                      foregroundColor: cs.onPrimaryContainer,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -232,9 +226,9 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
               const SizedBox(height: 12),
 
               // Ingredients
-              const Text('Ingredients',
+              Text('Ingredients',
                   style: TextStyle(
-                      color: Colors.white70,
+                      color: cs.onSurface.withValues(alpha: 0.65),
                       fontSize: 13,
                       fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
@@ -242,13 +236,13 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
                 children: [
                   Expanded(
                     child: _field(
-                        controller: _ingredientCtrl, label: 'Add ingredient'),
+                        controller: _ingredientCtrl,
+                        label: 'Add ingredient'),
                   ),
                   const SizedBox(width: 8),
                   IconButton(
                     onPressed: _addIngredient,
-                    icon: const Icon(Icons.add_circle,
-                        color: Color(0xFFFFB300), size: 28),
+                    icon: Icon(Icons.add_circle, color: cs.secondary, size: 28),
                   ),
                 ],
               ),
@@ -262,11 +256,7 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
                       .entries
                       .map(
                         (e) => Chip(
-                          label: Text(e.value,
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.white)),
-                          backgroundColor: const Color(0xFF4A148C),
-                          deleteIconColor: Colors.white70,
+                          label: Text(e.value),
                           onDeleted: () =>
                               setState(() => _ingredients.removeAt(e.key)),
                         ),
@@ -290,10 +280,10 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
                   Switch(
                     value: _isPopular,
                     onChanged: (v) => setState(() => _isPopular = v),
-                    activeThumbColor: const Color(0xFFFFB300),
                   ),
-                  const Text('Mark as Popular',
-                      style: TextStyle(color: Colors.white70)),
+                  Text('Mark as Popular',
+                      style: TextStyle(
+                          color: cs.onSurface.withValues(alpha: 0.65))),
                 ],
               ),
               const SizedBox(height: 16),
@@ -302,17 +292,7 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7B1FA2),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text('Add to Menu',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold)),
+                  child: const Text('Add to Menu'),
                 ),
               ),
             ],
@@ -328,29 +308,13 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
     int maxLines = 1,
     String? Function(String?)? validator,
   }) {
+    final cs = Theme.of(context).colorScheme;
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: cs.onSurface),
       validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-        filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.05),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Color(0xFF7B1FA2)),
-        ),
-      ),
+      decoration: InputDecoration(labelText: label),
     );
   }
 }
@@ -368,26 +332,24 @@ class _TypeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF7B1FA2) : Colors.transparent,
+          color: selected ? cs.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: selected
-                ? const Color(0xFF7B1FA2)
-                : Colors.white.withValues(alpha: 0.3),
+            color: selected ? cs.primary : cs.outline,
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: selected ? Colors.white : Colors.white54,
-            fontWeight:
-                selected ? FontWeight.bold : FontWeight.normal,
+            color: selected ? cs.onPrimary : cs.onSurface.withValues(alpha: 0.55),
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             fontSize: 13,
           ),
         ),

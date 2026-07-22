@@ -67,21 +67,30 @@ class _MyRequestsScreenState extends State<MyRequestsScreen> {
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E1E2E),
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+            border: Border.all(
+                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.6)),
+            boxShadow: Theme.of(context).brightness == Brightness.light
+                ? [
+                    BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 2))
+                  ]
+                : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Text('✉️', style: TextStyle(fontSize: 18)),
-                  SizedBox(width: 8),
+                  const Text('✉️', style: TextStyle(fontSize: 18)),
+                  const SizedBox(width: 8),
                   Text(
                     'Request a Drink',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.bold,
                         fontSize: 15),
                   ),
@@ -90,29 +99,12 @@ class _MyRequestsScreenState extends State<MyRequestsScreen> {
               const SizedBox(height: 12),
               TextField(
                 controller: _requestCtrl,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface),
                 maxLines: 3,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText:
                       'Describe the drink you want or request a custom creation...',
-                  hintStyle:
-                      const TextStyle(color: Colors.white38, fontSize: 13),
-                  filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        BorderSide(color: Colors.white.withValues(alpha: 0.15)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        BorderSide(color: Colors.white.withValues(alpha: 0.15)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0xFF7B1FA2)),
-                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -120,13 +112,7 @@ class _MyRequestsScreenState extends State<MyRequestsScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _submitRequest,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7B1FA2),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  child: const Text('Submit Request',
-                      style: TextStyle(color: Colors.white)),
+                  child: const Text('Submit Request'),
                 ),
               ),
             ],
@@ -192,11 +178,11 @@ class _RequestCard extends StatelessWidget {
   Color get _statusColor {
     switch (request.status) {
       case RequestStatus.pending:
-        return const Color(0xFFFFB300);
+        return const Color(0xFFF57C00);
       case RequestStatus.fulfilled:
-        return const Color(0xFF4CAF50);
+        return const Color(0xFF388E3C);
       case RequestStatus.rejected:
-        return Colors.red;
+        return const Color(0xFFD32F2F);
     }
   }
 
@@ -213,15 +199,27 @@ class _RequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final fmt = DateFormat('MMM d, h:mm a');
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E2E),
+        color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-            color: _statusColor.withValues(alpha: 0.3)),
+        border: isDark
+            ? Border.all(color: _statusColor.withValues(alpha: 0.35))
+            : null,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                )
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,15 +229,14 @@ class _RequestCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   request.requestText,
-                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                  style: TextStyle(color: cs.onSurface, fontSize: 14),
                 ),
               ),
               const SizedBox(width: 8),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _statusColor.withValues(alpha: 0.15),
+                  color: _statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -247,44 +244,39 @@ class _RequestCard extends StatelessWidget {
                   children: [
                     Icon(_statusIcon, size: 12, color: _statusColor),
                     const SizedBox(width: 4),
-                    Text(
-                      request.status.displayName,
-                      style: TextStyle(
-                          color: _statusColor,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold),
-                    ),
+                    Text(request.status.displayName,
+                        style: TextStyle(
+                            color: _statusColor,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            fmt.format(request.timestamp),
-            style:
-                const TextStyle(color: Colors.white38, fontSize: 11),
-          ),
+          Text(fmt.format(request.timestamp),
+              style: TextStyle(
+                  color: cs.onSurface.withValues(alpha: 0.4), fontSize: 11)),
           if (request.response != null) ...[
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.04),
+                color: cs.surfaceVariant,
                 borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: cs.outline.withValues(alpha: 0.5)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('🍹',
-                      style: TextStyle(fontSize: 14)),
+                  const Text('🍹', style: TextStyle(fontSize: 14)),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      request.response!,
-                      style: const TextStyle(
-                          color: Colors.white70, fontSize: 13),
-                    ),
+                    child: Text(request.response!,
+                        style: TextStyle(
+                            color: cs.onSurface.withValues(alpha: 0.7),
+                            fontSize: 13)),
                   ),
                 ],
               ),

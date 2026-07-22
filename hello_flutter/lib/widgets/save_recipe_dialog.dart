@@ -104,27 +104,20 @@ class _SaveRecipeDialogState extends State<SaveRecipeDialog> {
 
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${drink.name} saved to menu! 🍹'),
-        backgroundColor: const Color(0xFF2E7D32),
-      ),
+      SnackBar(content: Text('${drink.name} saved to menu! 🍹')),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return AlertDialog(
-      backgroundColor: const Color(0xFF1E1E2E),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       title: const Row(
         children: [
           Text('💾', style: TextStyle(fontSize: 22)),
           SizedBox(width: 8),
-          Text(
-            'Save as Drink',
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
+          Text('Save as Drink'),
         ],
       ),
       content: SizedBox(
@@ -138,7 +131,7 @@ class _SaveRecipeDialogState extends State<SaveRecipeDialog> {
               Text(
                 'Save this AI recipe to your drinks menu.',
                 style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.55), fontSize: 13),
+                    color: cs.onSurface.withValues(alpha: 0.55), fontSize: 13),
               ),
               const SizedBox(height: 16),
 
@@ -163,38 +156,19 @@ class _SaveRecipeDialogState extends State<SaveRecipeDialog> {
               // Name field + AI suggest button
               TextFormField(
                 controller: _nameCtrl,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: cs.onSurface),
                 validator: (v) =>
                     v == null || v.trim().isEmpty ? 'Enter a name' : null,
                 decoration: InputDecoration(
                   labelText: 'Drink Name *',
-                  labelStyle:
-                      TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-                  filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.2)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.2)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide:
-                        const BorderSide(color: Color(0xFF7B1FA2)),
-                  ),
                   suffixIcon: _isSuggestingName
-                      ? const Padding(
-                          padding: EdgeInsets.all(12),
+                      ? Padding(
+                          padding: const EdgeInsets.all(12),
                           child: SizedBox(
                             width: 18,
                             height: 18,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Color(0xFFFFB300)),
+                                strokeWidth: 2, color: cs.secondary),
                           ),
                         )
                       : Tooltip(
@@ -211,9 +185,9 @@ class _SaveRecipeDialogState extends State<SaveRecipeDialog> {
               GestureDetector(
                 onTap: _isSuggestingName ? null : _suggestName,
                 child: Text(
-                  '✨ Tap the sparkle icon or here to auto-suggest a name with AI',
+                  '✨ Tap the sparkle icon to auto-suggest a name with AI',
                   style: TextStyle(
-                    color: const Color(0xFFFFB300).withValues(alpha: 0.7),
+                    color: cs.secondary.withValues(alpha: 0.7),
                     fontSize: 11,
                   ),
                 ),
@@ -228,12 +202,13 @@ class _SaveRecipeDialogState extends State<SaveRecipeDialog> {
                     child: Switch(
                       value: _isPopular,
                       onChanged: (v) => setState(() => _isPopular = v),
-                      activeTrackColor: const Color(0xFFFFB300),
                     ),
                   ),
                   const SizedBox(width: 4),
-                  const Text('Mark as Popular',
-                      style: TextStyle(color: Colors.white70, fontSize: 13)),
+                  Text('Mark as Popular',
+                      style: TextStyle(
+                          color: cs.onSurface.withValues(alpha: 0.65),
+                          fontSize: 13)),
                 ],
               ),
             ],
@@ -243,11 +218,16 @@ class _SaveRecipeDialogState extends State<SaveRecipeDialog> {
       actions: [
         TextButton(
           onPressed: _isSaving ? null : () => Navigator.pop(context),
-          child: const Text('Cancel',
-              style: TextStyle(color: Colors.white54)),
+          child: const Text('Cancel'),
         ),
         ElevatedButton.icon(
           onPressed: _isSaving ? null : _save,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2E7D32),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8)),
+          ),
           icon: _isSaving
               ? const SizedBox(
                   width: 14,
@@ -256,12 +236,6 @@ class _SaveRecipeDialogState extends State<SaveRecipeDialog> {
                       strokeWidth: 2, color: Colors.white))
               : const Icon(Icons.save_alt, size: 16),
           label: const Text('Save to Menu'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2E7D32),
-            foregroundColor: Colors.white,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          ),
         ),
       ],
     );
@@ -281,30 +255,25 @@ class _TypeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: selected
-              ? const Color(0xFF7B1FA2)
-              : Colors.white.withValues(alpha: 0.05),
+          color: selected ? cs.primary : cs.surfaceVariant,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: selected
-                ? const Color(0xFF7B1FA2)
-                : Colors.white.withValues(alpha: 0.2),
+            color: selected ? cs.primary : cs.outline,
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: selected ? Colors.white : Colors.white54,
+            color: selected ? cs.onPrimary : cs.onSurface.withValues(alpha: 0.6),
             fontSize: 13,
-            fontWeight:
-                selected ? FontWeight.bold : FontWeight.normal,
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ),

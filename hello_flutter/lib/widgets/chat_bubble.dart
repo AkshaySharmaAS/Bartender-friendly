@@ -9,14 +9,13 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (message.isLoading) {
-      return _buildLoadingBubble();
-    }
+    if (message.isLoading) return _buildLoadingBubble(context);
 
+    final cs = Theme.of(context).colorScheme;
     final showSaveButton = onSave != null && !message.isUser;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Column(
         crossAxisAlignment: message.isUser
             ? CrossAxisAlignment.end
@@ -29,45 +28,45 @@ class ChatBubble extends StatelessWidget {
             children: [
               if (!message.isUser) ...[
                 Container(
-                  width: 32,
-                  height: 32,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF7B1FA2),
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: cs.primaryContainer,
                     shape: BoxShape.circle,
                   ),
                   child: const Center(
-                    child: Text('🍸', style: TextStyle(fontSize: 16)),
-                  ),
+                      child: Text('🍸', style: TextStyle(fontSize: 15))),
                 ),
                 const SizedBox(width: 8),
               ],
               Flexible(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
                   decoration: BoxDecoration(
                     color: message.isUser
-                        ? const Color(0xFF7B1FA2)
-                        : const Color(0xFF1E1E2E),
+                        ? cs.primary
+                        : cs.surfaceVariant,
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(16),
                       topRight: const Radius.circular(16),
-                      bottomLeft: Radius.circular(message.isUser ? 16 : 4),
-                      bottomRight: Radius.circular(message.isUser ? 4 : 16),
+                      bottomLeft:
+                          Radius.circular(message.isUser ? 16 : 4),
+                      bottomRight:
+                          Radius.circular(message.isUser ? 4 : 16),
                     ),
                     border: message.isUser
                         ? null
-                        : Border.all(
-                            color: Colors.white.withValues(alpha: 0.1),
-                          ),
+                        : Border.all(color: cs.outline.withValues(alpha: 0.6)),
                   ),
                   child: Text(
                     message.content,
                     style: TextStyle(
                       color: message.isUser
-                          ? Colors.white
-                          : Colors.white.withValues(alpha: 0.9),
+                          ? cs.onPrimary
+                          : cs.onSurface,
                       fontSize: 14,
-                      height: 1.4,
+                      height: 1.45,
                     ),
                   ),
                 ),
@@ -75,14 +74,17 @@ class ChatBubble extends StatelessWidget {
               if (message.isUser) ...[
                 const SizedBox(width: 8),
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 30,
+                  height: 30,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: cs.surfaceVariant,
                     shape: BoxShape.circle,
+                    border: Border.all(color: cs.outline),
                   ),
-                  child: const Center(
-                    child: Icon(Icons.person, size: 18, color: Colors.white),
+                  child: Center(
+                    child: Icon(Icons.person,
+                        size: 16,
+                        color: cs.onSurface.withValues(alpha: 0.7)),
                   ),
                 ),
               ],
@@ -94,25 +96,25 @@ class ChatBubble extends StatelessWidget {
               child: GestureDetector(
                 onTap: onSave,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 5),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2E7D32).withValues(alpha: 0.15),
+                    color: Colors.green.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                        color: const Color(0xFF4CAF50).withValues(alpha: 0.5)),
+                        color: Colors.green.withValues(alpha: 0.45)),
                   ),
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.save_alt,
-                          size: 13, color: Color(0xFF4CAF50)),
+                          size: 12, color: Colors.green),
                       SizedBox(width: 5),
                       Text(
                         'Save as Drink',
                         style: TextStyle(
-                          color: Color(0xFF4CAF50),
-                          fontSize: 12,
+                          color: Colors.green,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -126,36 +128,36 @@ class ChatBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingBubble() {
+  Widget _buildLoadingBubble(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
           Container(
-            width: 32,
-            height: 32,
-            decoration: const BoxDecoration(
-              color: Color(0xFF7B1FA2),
-              shape: BoxShape.circle,
-            ),
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+                color: cs.primaryContainer, shape: BoxShape.circle),
             child: const Center(
-              child: Text('🍸', style: TextStyle(fontSize: 16)),
-            ),
+                child: Text('🍸', style: TextStyle(fontSize: 15))),
           ),
           const SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E1E2E),
+              color: cs.surfaceVariant,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
                 bottomRight: Radius.circular(16),
                 bottomLeft: Radius.circular(4),
               ),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              border:
+                  Border.all(color: cs.outline.withValues(alpha: 0.6)),
             ),
-            child: _TypingIndicator(),
+            child: const _TypingIndicator(),
           ),
         ],
       ),
@@ -164,6 +166,8 @@ class ChatBubble extends StatelessWidget {
 }
 
 class _TypingIndicator extends StatefulWidget {
+  const _TypingIndicator();
+
   @override
   State<_TypingIndicator> createState() => _TypingIndicatorState();
 }
@@ -189,6 +193,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
 
   @override
   Widget build(BuildContext context) {
+    final dotColor = Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
@@ -202,10 +207,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
               padding: const EdgeInsets.symmetric(horizontal: 2),
               child: Opacity(
                 opacity: opacity,
-                child: const CircleAvatar(
-                  radius: 4,
-                  backgroundColor: Colors.white60,
-                ),
+                child: CircleAvatar(radius: 4, backgroundColor: dotColor),
               ),
             );
           }),
@@ -214,3 +216,4 @@ class _TypingIndicatorState extends State<_TypingIndicator>
     );
   }
 }
+

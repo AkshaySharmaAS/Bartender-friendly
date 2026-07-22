@@ -17,9 +17,10 @@ class DrinkDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isCocktail = drink.type == DrinkType.cocktail;
-    final typeColor =
-        isCocktail ? const Color(0xFFFFB300) : const Color(0xFF26A69A);
+    final accentColor = isCocktail ? cs.secondary : cs.tertiary;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
@@ -27,9 +28,18 @@ class DrinkDetailSheet extends StatelessWidget {
       minChildSize: 0.4,
       builder: (context, scrollController) {
         return Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF1E1E2E),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          decoration: BoxDecoration(
+            color: cs.surface,
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(24)),
+            boxShadow: isDark
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 20,
+                    )
+                  ],
           ),
           child: SingleChildScrollView(
             controller: scrollController,
@@ -42,7 +52,7 @@ class DrinkDetailSheet extends StatelessWidget {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.white24,
+                      color: cs.outline,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -54,7 +64,7 @@ class DrinkDetailSheet extends StatelessWidget {
                   children: [
                     Text(
                       isCocktail ? '🍸' : '🥤',
-                      style: const TextStyle(fontSize: 40),
+                      style: const TextStyle(fontSize: 44),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -63,54 +73,19 @@ class DrinkDetailSheet extends StatelessWidget {
                         children: [
                           Text(
                             drink.name,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: cs.onSurface,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 5),
                           Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: typeColor.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                      color: typeColor.withValues(alpha: 0.5)),
-                                ),
-                                child: Text(
-                                  drink.type.displayName,
-                                  style: TextStyle(
-                                    color: typeColor,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
+                              _badge(drink.type.displayName, accentColor),
                               if (drink.isPopular) ...[
                                 const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 3),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFFB300)
-                                        .withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                        color: const Color(0xFFFFB300)
-                                            .withValues(alpha: 0.5)),
-                                  ),
-                                  child: const Text(
-                                    '★ Popular',
-                                    style: TextStyle(
-                                        color: Color(0xFFFFB300),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                ),
+                                _badge('★ Popular', cs.secondary),
                               ],
                             ],
                           ),
@@ -124,14 +99,14 @@ class DrinkDetailSheet extends StatelessWidget {
                 Text(
                   drink.description,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: cs.onSurface.withValues(alpha: 0.7),
                     fontSize: 15,
-                    height: 1.5,
+                    height: 1.55,
                   ),
                 ),
 
-                const SizedBox(height: 24),
-                _sectionTitle('🧪 Ingredients'),
+                const SizedBox(height: 26),
+                _sectionTitle(context, '🧪 Ingredients'),
                 const SizedBox(height: 10),
                 ...drink.ingredients.map((i) => Padding(
                       padding: const EdgeInsets.only(bottom: 8),
@@ -143,36 +118,34 @@ class DrinkDetailSheet extends StatelessWidget {
                             height: 6,
                             margin: const EdgeInsets.only(top: 6, right: 10),
                             decoration: BoxDecoration(
-                              color: typeColor,
+                              color: accentColor,
                               shape: BoxShape.circle,
                             ),
                           ),
                           Expanded(
-                            child: Text(
-                              i,
-                              style: const TextStyle(
-                                  color: Colors.white70, fontSize: 14),
-                            ),
+                            child: Text(i,
+                                style: TextStyle(
+                                    color: cs.onSurface.withValues(alpha: 0.75),
+                                    fontSize: 14)),
                           ),
                         ],
                       ),
                     )),
 
-                const SizedBox(height: 24),
-                _sectionTitle('📋 Method'),
+                const SizedBox(height: 26),
+                _sectionTitle(context, '📋 Method'),
                 const SizedBox(height: 10),
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.04),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.1)),
+                    color: cs.surfaceVariant,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: cs.outline.withValues(alpha: 0.5)),
                   ),
                   child: Text(
                     drink.recipe,
-                    style: const TextStyle(
-                      color: Colors.white70,
+                    style: TextStyle(
+                      color: cs.onSurface.withValues(alpha: 0.75),
                       fontSize: 14,
                       height: 1.6,
                     ),
@@ -187,14 +160,29 @@ class DrinkDetailSheet extends StatelessWidget {
     );
   }
 
-  Widget _sectionTitle(String title) {
+  Widget _badge(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Text(text,
+          style: TextStyle(
+              color: color, fontSize: 12, fontWeight: FontWeight.w600)),
+    );
+  }
+
+  Widget _sectionTitle(BuildContext context, String title) {
     return Text(
       title,
-      style: const TextStyle(
-        color: Colors.white,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
         fontSize: 17,
         fontWeight: FontWeight.bold,
       ),
     );
   }
 }
+

@@ -39,89 +39,67 @@ class _BartenderHomeScreenState extends State<BartenderHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final user = context.watch<AuthProvider>().currentUser!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D1A),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A0A2E),
-        elevation: 0,
         title: Row(
           children: [
             const Text('🍹', style: TextStyle(fontSize: 20)),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Bartender Panel',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                ),
-                Text(
-                  user.name,
-                  style:
-                      const TextStyle(color: Colors.white54, fontSize: 12),
-                ),
+                Text('Bartender Panel',
+                    style: TextStyle(
+                        color: cs.onSurface,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16)),
+                Text(user.name,
+                    style: TextStyle(
+                        color: cs.onSurface.withValues(alpha: 0.5),
+                        fontSize: 12)),
               ],
             ),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.key, color: Colors.white54),
+            icon: Icon(Icons.key, color: cs.onSurface.withValues(alpha: 0.5)),
             tooltip: 'API Key',
             onPressed: () => ApiKeyDialog.show(context),
           ),
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white54),
+            icon: Icon(Icons.logout, color: cs.onSurface.withValues(alpha: 0.5)),
             tooltip: 'Logout',
             onPressed: _logout,
           ),
         ],
       ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: _buildBottomNav(),
+      body: IndexedStack(index: _currentIndex, children: _pages),
+      bottomNavigationBar: _buildBottomNav(isDark),
     );
   }
 
-  Widget _buildBottomNav() {
+  Widget _buildBottomNav(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1A0A2E),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          )
-        ],
+        border: Border(
+          top: BorderSide(
+            color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFEEEEEE),
+            width: 0.5,
+          ),
+        ),
       ),
       child: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
-        backgroundColor: Colors.transparent,
-        selectedItemColor: const Color(0xFFFFB300),
-        unselectedItemColor: Colors.white38,
-        elevation: 0,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.liquor),
-            label: 'Drinks',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.auto_awesome),
-            label: 'AI Recipe',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.inbox),
-            label: 'Requests',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.liquor), label: 'Drinks'),
+          BottomNavigationBarItem(icon: Icon(Icons.auto_awesome), label: 'AI Recipe'),
+          BottomNavigationBarItem(icon: Icon(Icons.inbox), label: 'Requests'),
         ],
       ),
     );

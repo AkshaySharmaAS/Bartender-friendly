@@ -52,43 +52,59 @@ class _AiRecipeScreenState extends State<AiRecipeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       children: [
         // Header
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF1A3A1A), Color(0xFF2E7D32)],
+          decoration: BoxDecoration(
+            color: isDark
+                ? const Color(0xFF1A3A1A)
+                : const Color(0xFFE8F5E9),
+            border: Border(
+              bottom: BorderSide(
+                color: isDark ? const Color(0xFF2A4A2A) : const Color(0xFFC8E6C9),
+                width: 0.5,
+              ),
             ),
           ),
           child: Row(
             children: [
               const Text('🤖', style: TextStyle(fontSize: 22)),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'AI Recipe Assistant',
                       style: TextStyle(
-                          color: Colors.white,
+                          color: isDark
+                              ? const Color(0xFF81C784)
+                              : const Color(0xFF1B5E20),
                           fontWeight: FontWeight.bold,
                           fontSize: 15),
                     ),
                     Text(
                       'Create & refine cocktail recipes with AI',
-                      style:
-                          TextStyle(color: Colors.white70, fontSize: 12),
+                      style: TextStyle(
+                          color: isDark
+                              ? const Color(0xFF81C784).withValues(alpha: 0.65)
+                              : const Color(0xFF388E3C),
+                          fontSize: 12),
                     ),
                   ],
                 ),
               ),
               Consumer<ChatProvider>(
                 builder: (_, chat, _) => IconButton(
-                  icon:
-                      const Icon(Icons.refresh, color: Colors.white70),
+                  icon: Icon(Icons.refresh,
+                      color: isDark
+                          ? const Color(0xFF81C784).withValues(alpha: 0.65)
+                          : const Color(0xFF388E3C)),
                   tooltip: 'New session',
                   onPressed: chat.clearMessages,
                 ),
@@ -142,35 +158,28 @@ class _AiRecipeScreenState extends State<AiRecipeScreen> {
         Container(
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A0A2E),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2))
-            ],
+            color: Theme.of(context).colorScheme.surface,
+            border: Border(
+              top: BorderSide(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF2A2A2A)
+                    : const Color(0xFFEEEEEE),
+                width: 0.5,
+              ),
+            ),
           ),
           child: Row(
             children: [
               Expanded(
                 child: TextField(
                   controller: _msgCtrl,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface),
                   maxLines: null,
                   textInputAction: TextInputAction.send,
                   onSubmitted: (_) => _send(),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Ask for a recipe, ingredient sub...',
-                    hintStyle:
-                        const TextStyle(color: Colors.white38),
-                    filled: true,
-                    fillColor: Colors.white.withValues(alpha: 0.06),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 18, vertical: 12),
                   ),
                 ),
               ),
@@ -178,12 +187,13 @@ class _AiRecipeScreenState extends State<AiRecipeScreen> {
               Consumer<ChatProvider>(
                 builder: (_, chat, _) => GestureDetector(
                   onTap: chat.isSending ? null : _send,
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
                     width: 46,
                     height: 46,
                     decoration: BoxDecoration(
                       color: chat.isSending
-                          ? const Color(0xFF1B5E20)
+                          ? const Color(0xFF2E7D32).withValues(alpha: 0.5)
                           : const Color(0xFF2E7D32),
                       shape: BoxShape.circle,
                     ),
@@ -193,8 +203,7 @@ class _AiRecipeScreenState extends State<AiRecipeScreen> {
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2),
+                                  color: Colors.white, strokeWidth: 2),
                             ),
                           )
                         : const Icon(Icons.send,
@@ -225,6 +234,7 @@ class _BartenderPrompts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -233,17 +243,18 @@ class _BartenderPrompts extends StatelessWidget {
           children: [
             const Text('✨', style: TextStyle(fontSize: 52)),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'AI Recipe Studio',
               style: TextStyle(
-                  color: Colors.white,
+                  color: cs.onSurface,
                   fontSize: 22,
                   fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Get AI-generated recipes, ingredient suggestions and creative ideas',
-              style: TextStyle(color: Colors.white54, fontSize: 13),
+              style: TextStyle(
+                  color: cs.onSurface.withValues(alpha: 0.5), fontSize: 13),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 28),
@@ -256,20 +267,18 @@ class _BartenderPrompts extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 14),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
+                        color: cs.surfaceVariant,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.1)),
+                        border: Border.all(color: cs.outline),
                       ),
                       child: Row(
                         children: [
-                          const Text('💡',
-                              style: TextStyle(fontSize: 16)),
+                          const Text('💡', style: TextStyle(fontSize: 16)),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(p,
-                                style: const TextStyle(
-                                    color: Colors.white70,
+                                style: TextStyle(
+                                    color: cs.onSurface.withValues(alpha: 0.75),
                                     fontSize: 13)),
                           ),
                         ],
@@ -292,28 +301,26 @@ class _ErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.red.withValues(alpha: 0.1),
+          color: cs.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+          border: Border.all(color: cs.error.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
-            const Icon(Icons.error_outline, color: Colors.red, size: 16),
+            Icon(Icons.error_outline, color: cs.error, size: 16),
             const SizedBox(width: 8),
             Expanded(
               child: Text(message,
-                  style:
-                      const TextStyle(color: Colors.red, fontSize: 12)),
+                  style: TextStyle(color: cs.error, fontSize: 12)),
             ),
             IconButton(
-              icon:
-                  const Icon(Icons.close, color: Colors.red, size: 16),
+              icon: Icon(Icons.close, color: cs.error, size: 16),
               onPressed: onDismiss,
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),

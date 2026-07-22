@@ -40,89 +40,67 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final user = context.watch<AuthProvider>().currentUser!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D1A),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1A0A2E),
-        elevation: 0,
         title: Row(
           children: [
             const Text('⚙️', style: TextStyle(fontSize: 20)),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Admin Panel',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                ),
-                Text(
-                  user.name,
-                  style:
-                      const TextStyle(color: Colors.white54, fontSize: 12),
-                ),
+                Text('Admin Panel',
+                    style: TextStyle(
+                        color: cs.onSurface,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16)),
+                Text(user.name,
+                    style: TextStyle(
+                        color: cs.onSurface.withValues(alpha: 0.5),
+                        fontSize: 12)),
               ],
             ),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.key, color: Colors.white54),
+            icon: Icon(Icons.key, color: cs.onSurface.withValues(alpha: 0.5)),
             tooltip: 'API Key',
             onPressed: () => ApiKeyDialog.show(context),
           ),
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white54),
+            icon: Icon(Icons.logout, color: cs.onSurface.withValues(alpha: 0.5)),
             tooltip: 'Logout',
             onPressed: _logout,
           ),
         ],
       ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: _buildBottomNav(),
+      body: IndexedStack(index: _currentIndex, children: _pages),
+      bottomNavigationBar: _buildBottomNav(isDark),
     );
   }
 
-  Widget _buildBottomNav() {
+  Widget _buildBottomNav(bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1A0A2E),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          )
-        ],
+        border: Border(
+          top: BorderSide(
+            color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFEEEEEE),
+            width: 0.5,
+          ),
+        ),
       ),
       child: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
-        backgroundColor: Colors.transparent,
-        selectedItemColor: const Color(0xFFFFB300),
-        unselectedItemColor: Colors.white38,
-        elevation: 0,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Overview',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'Bartenders',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.local_bar),
-            label: 'Drinks',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Overview'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Bartenders'),
+          BottomNavigationBarItem(icon: Icon(Icons.local_bar), label: 'Drinks'),
         ],
       ),
     );
@@ -134,6 +112,7 @@ class AdminOverviewTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final drinks = context.watch<DrinkProvider>().drinks;
     final users = context.watch<UserManagementProvider>().users;
     final bartenders = users.where((u) => u.role.name == 'bartender').length;
@@ -146,18 +125,15 @@ class AdminOverviewTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Overview',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold),
-          ),
+          Text('Overview',
+              style: TextStyle(
+                  color: cs.onSurface,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          const Text(
-            'Bar statistics at a glance',
-            style: TextStyle(color: Colors.white54, fontSize: 13),
-          ),
+          Text('Bar statistics at a glance',
+              style: TextStyle(
+                  color: cs.onSurface.withValues(alpha: 0.5), fontSize: 13)),
           const SizedBox(height: 24),
           GridView.count(
             crossAxisCount: 2,
@@ -167,44 +143,24 @@ class AdminOverviewTab extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             childAspectRatio: 1.4,
             children: [
-              _StatCard(
-                  label: 'Bartenders',
-                  value: '$bartenders',
-                  icon: '🍹',
-                  color: const Color(0xFF7B1FA2)),
-              _StatCard(
-                  label: 'Customers',
-                  value: '$customers',
-                  icon: '👥',
-                  color: const Color(0xFF1565C0)),
-              _StatCard(
-                  label: 'Cocktails',
-                  value: '$cocktails',
-                  icon: '🍸',
-                  color: const Color(0xFFE65100)),
-              _StatCard(
-                  label: 'Mocktails',
-                  value: '$mocktails',
-                  icon: '🥤',
-                  color: const Color(0xFF2E7D32)),
+              _StatCard(label: 'Bartenders', value: '$bartenders', icon: '🍹', color: cs.primary),
+              _StatCard(label: 'Customers', value: '$customers', icon: '👥', color: cs.tertiary),
+              _StatCard(label: 'Cocktails', value: '$cocktails', icon: '🍸', color: cs.secondary),
+              _StatCard(label: 'Mocktails', value: '$mocktails', icon: '🥤', color: cs.tertiary),
             ],
           ),
           const SizedBox(height: 28),
-          const Text(
-            'Quick Actions',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 17,
-                fontWeight: FontWeight.bold),
-          ),
+          Text('Quick Actions',
+              style: TextStyle(
+                  color: cs.onSurface,
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           _QuickAction(
             icon: Icons.person_add,
             label: 'Add Bartender',
             subtitle: 'Register a new bartender account',
-            onTap: () {
-              // Handled in ManageBartendersScreen
-            },
+            onTap: () {},
           ),
           const SizedBox(height: 10),
           _QuickAction(
@@ -234,12 +190,25 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E2E),
+        color: cs.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: isDark
+            ? Border.all(color: cs.outline.withValues(alpha: 0.6))
+            : null,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
+                )
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,18 +231,15 @@ class _StatCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                value,
-                style: TextStyle(
-                    color: color,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold),
-              ),
-              Text(
-                label,
-                style:
-                    const TextStyle(color: Colors.white54, fontSize: 12),
-              ),
+              Text(value,
+                  style: TextStyle(
+                      color: color,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold)),
+              Text(label,
+                  style: TextStyle(
+                      color: cs.onSurface.withValues(alpha: 0.55),
+                      fontSize: 12)),
             ],
           ),
         ],
@@ -297,12 +263,25 @@ class _QuickAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E2E),
+        color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: isDark
+            ? Border.all(color: cs.outline.withValues(alpha: 0.6))
+            : null,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                )
+              ],
       ),
       child: Row(
         children: [
@@ -310,10 +289,10 @@ class _QuickAction extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFF7B1FA2).withValues(alpha: 0.15),
+              color: cs.primaryContainer,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: const Color(0xFF7B1FA2), size: 20),
+            child: Icon(icon, color: cs.primary, size: 20),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -321,17 +300,19 @@ class _QuickAction extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(label,
-                    style: const TextStyle(
-                        color: Colors.white,
+                    style: TextStyle(
+                        color: cs.onSurface,
                         fontWeight: FontWeight.w600,
                         fontSize: 14)),
                 Text(subtitle,
-                    style: const TextStyle(
-                        color: Colors.white54, fontSize: 12)),
+                    style: TextStyle(
+                        color: cs.onSurface.withValues(alpha: 0.5),
+                        fontSize: 12)),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, color: Colors.white38),
+          Icon(Icons.chevron_right,
+              color: cs.onSurface.withValues(alpha: 0.35)),
         ],
       ),
     );
