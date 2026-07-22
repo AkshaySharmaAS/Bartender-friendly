@@ -35,6 +35,21 @@ Use the theme button in the top bar to switch between:
 - Light theme
 - Dark theme
 
+## 📸 Customer
+
+![Login](sample_screenshots/Customer/Login_Screen.png)
+![Home](sample_screenshots/Customer/Customer_Menu.png)
+
+## 🍸 Bartender
+
+![Dashboard](sample_screenshots/Bartender/Bartender_Menu.png)
+![AI Recipe](sample_screenshots/Bartender/Bartender_AI_With_Save_Option.png)
+
+## 👨‍💼 Admin
+
+![Dashboard](sample_screenshots/Admin/Admin_Add_Bartender.png)
+![Manage Users](sample_screenshots/Admin/Admin_Screen.png)
+
 ## Contributing
 
 Fork the repo, create a focused branch, and open a pull request with a clear summary and screenshots when UI changes are involved.
