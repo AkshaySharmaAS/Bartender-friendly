@@ -184,10 +184,12 @@ class _RequestList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     if (requests.isEmpty) {
       return Center(
         child: Text(emptyMessage,
-            style: const TextStyle(color: Colors.white54, fontSize: 16)),
+            style: TextStyle(
+                color: cs.onSurface.withValues(alpha: 0.5), fontSize: 16)),
       );
     }
 
@@ -220,26 +222,38 @@ class _RequestTile extends StatelessWidget {
   Color get _statusColor {
     switch (request.status) {
       case RequestStatus.pending:
-        return const Color(0xFFFFB300);
+        return const Color(0xFFF57C00);
       case RequestStatus.fulfilled:
-        return const Color(0xFF4CAF50);
+        return const Color(0xFF388E3C);
       case RequestStatus.rejected:
-        return Colors.red;
+        return const Color(0xFFD32F2F);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final fmt = DateFormat('MMM d, h:mm a');
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E2E),
+        color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-            color: _statusColor.withValues(alpha: 0.3)),
+        border: isDark
+            ? Border.all(color: _statusColor.withValues(alpha: 0.35))
+            : null,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                )
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,11 +264,11 @@ class _RequestTile extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7B1FA2).withValues(alpha: 0.2),
+                  color: cs.primaryContainer,
                   shape: BoxShape.circle,
                 ),
-                child: const Center(
-                  child: Icon(Icons.person, color: Color(0xFF7B1FA2), size: 18),
+                child: Center(
+                  child: Icon(Icons.person, color: cs.primary, size: 18),
                 ),
               ),
               const SizedBox(width: 10),
@@ -262,35 +276,29 @@ class _RequestTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      request.customerName,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13),
-                    ),
-                    Text(
-                      fmt.format(request.timestamp),
-                      style: const TextStyle(
-                          color: Colors.white38, fontSize: 11),
-                    ),
+                    Text(request.customerName,
+                        style: TextStyle(
+                            color: cs.onSurface,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13)),
+                    Text(fmt.format(request.timestamp),
+                        style: TextStyle(
+                            color: cs.onSurface.withValues(alpha: 0.38),
+                            fontSize: 11)),
                   ],
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _statusColor.withValues(alpha: 0.15),
+                  color: _statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(
-                  request.status.displayName,
-                  style: TextStyle(
-                      color: _statusColor,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold),
-                ),
+                child: Text(request.status.displayName,
+                    style: TextStyle(
+                        color: _statusColor,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -298,28 +306,27 @@ class _RequestTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.04),
+              color: cs.surfaceVariant,
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: cs.outline.withValues(alpha: 0.5)),
             ),
-            child: Text(
-              request.requestText,
-              style:
-                  const TextStyle(color: Colors.white70, fontSize: 13),
-            ),
+            child: Text(request.requestText,
+                style: TextStyle(
+                    color: cs.onSurface.withValues(alpha: 0.75), fontSize: 13)),
           ),
           if (request.response != null) ...[
             const SizedBox(height: 10),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.reply, color: Colors.white38, size: 14),
+                Icon(Icons.reply,
+                    color: cs.onSurface.withValues(alpha: 0.38), size: 14),
                 const SizedBox(width: 6),
                 Expanded(
-                  child: Text(
-                    request.response!,
-                    style: const TextStyle(
-                        color: Colors.white54, fontSize: 12),
-                  ),
+                  child: Text(request.response!,
+                      style: TextStyle(
+                          color: cs.onSurface.withValues(alpha: 0.55),
+                          fontSize: 12)),
                 ),
               ],
             ),
@@ -332,8 +339,8 @@ class _RequestTile extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: onReject,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.red),
+                      foregroundColor: const Color(0xFFD32F2F),
+                      side: const BorderSide(color: Color(0xFFD32F2F)),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
@@ -345,12 +352,12 @@ class _RequestTile extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: onFulfill,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2E7D32),
+                      backgroundColor: const Color(0xFF388E3C),
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('Fulfill',
-                        style: TextStyle(color: Colors.white)),
+                    child: const Text('Fulfill'),
                   ),
                 ),
               ],

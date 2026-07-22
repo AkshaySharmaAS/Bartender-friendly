@@ -127,7 +127,7 @@ class _MyRequestsScreenState extends State<MyRequestsScreen> {
             child: Text(
               'My Requests',
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                   fontWeight: FontWeight.bold,
                   fontSize: 14),
             ),

@@ -68,9 +68,6 @@ class _DrinksMenuScreenState extends State<DrinksMenuScreen>
         if (_searchQuery.isEmpty)
           TabBar(
             controller: _tabCtrl,
-            indicatorColor: const Color(0xFFFFB300),
-            labelColor: const Color(0xFFFFB300),
-            unselectedLabelColor: Colors.white38,
             tabs: const [
               Tab(text: 'All'),
               Tab(text: '🍸 Cocktails'),
@@ -82,8 +79,9 @@ class _DrinksMenuScreenState extends State<DrinksMenuScreen>
           child: Consumer<DrinkProvider>(
             builder: (context, provider, _) {
               if (provider.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF7B1FA2)),
+                return Center(
+                  child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary),
                 );
               }
 
@@ -126,6 +124,8 @@ class _DrinkGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     if (drinks.isEmpty) {
       return Center(
         child: Column(
@@ -134,26 +134,36 @@ class _DrinkGrid extends StatelessWidget {
             const Text('🍷', style: TextStyle(fontSize: 48)),
             const SizedBox(height: 12),
             Text(emptyMessage,
-                style:
-                    const TextStyle(color: Colors.white54, fontSize: 14)),
+                style: TextStyle(
+                    color: cs.onSurface.withValues(alpha: 0.5),
+                    fontSize: 14)),
           ],
         ),
       );
     }
 
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.78,
-      ),
-      itemCount: drinks.length,
-      itemBuilder: (context, i) => DrinkCard(
-        drink: drinks[i],
-        onTap: () => DrinkDetailSheet.show(context, drinks[i]),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cols = constraints.maxWidth < 500
+            ? 2
+            : constraints.maxWidth < 800
+                ? 3
+                : 4;
+        return GridView.builder(
+          padding: const EdgeInsets.all(14),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: cols,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 0.72,
+          ),
+          itemCount: drinks.length,
+          itemBuilder: (context, i) => DrinkCard(
+            drink: drinks[i],
+            onTap: () => DrinkDetailSheet.show(context, drinks[i]),
+          ),
+        );
+      },
     );
   }
 }

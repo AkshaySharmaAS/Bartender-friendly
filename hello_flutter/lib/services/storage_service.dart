@@ -9,6 +9,8 @@ class StorageService {
   static const _drinksKey = 'drinks';
   static const _requestsKey = 'requests';
   static const _groqApiKeyKey = 'groq_api_key';
+  static const _drinksVersionKey = 'drinks_version';
+  static const _drinksVersion = 'v2'; // bump to force re-seed with new images
   static const _initializedKey = 'initialized';
 
   // ─── Users ───────────────────────────────────────────────────────────────
@@ -129,5 +131,17 @@ class StorageService {
   Future<void> setInitialized() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_initializedKey, true);
+  }
+
+  // ─── Drinks version (force re-seed when images/schema change) ────────────
+
+  Future<bool> isDrinksVersionCurrent() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_drinksVersionKey) == _drinksVersion;
+  }
+
+  Future<void> setDrinksVersion() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_drinksVersionKey, _drinksVersion);
   }
 }

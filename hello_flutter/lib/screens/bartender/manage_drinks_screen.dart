@@ -37,34 +37,23 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen>
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E2E),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Remove Drink',
-            style: TextStyle(color: Colors.white)),
-        content: Text(
-          'Remove "${drink.name}" from the menu?',
-          style: const TextStyle(color: Colors.white70),
-        ),
+        title: const Text('Remove Drink'),
+        content: Text('Remove "${drink.name}" from the menu?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel',
-                style: TextStyle(color: Colors.white54)),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
               context.read<DrinkProvider>().removeDrink(drink.id);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${drink.name} removed.'),
-                  backgroundColor: Colors.red.shade800,
-                ),
+                SnackBar(content: Text('${drink.name} removed.')),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Remove',
-                style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            child: const Text('Remove'),
           ),
         ],
       ),
@@ -82,9 +71,6 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen>
         children: [
           TabBar(
             controller: _tabCtrl,
-            indicatorColor: const Color(0xFFFFB300),
-            labelColor: const Color(0xFFFFB300),
-            unselectedLabelColor: Colors.white38,
             tabs: const [
               Tab(text: 'All'),
               Tab(text: '🍸 Cocktails'),
@@ -95,9 +81,9 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen>
             child: Consumer<DrinkProvider>(
               builder: (context, provider, _) {
                 if (provider.isLoading) {
-                  return const Center(
-                    child:
-                        CircularProgressIndicator(color: Color(0xFF7B1FA2)),
+                  return Center(
+                    child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.primary),
                   );
                 }
 
@@ -131,10 +117,8 @@ class _ManageDrinksScreenState extends State<ManageDrinksScreen>
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () =>
             AddDrinkDialog.show(context, bartenderId: bartenderId),
-        backgroundColor: const Color(0xFF7B1FA2),
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('Add Drink',
-            style: TextStyle(color: Colors.white)),
+        icon: const Icon(Icons.add),
+        label: const Text('Add Drink'),
       ),
     );
   }
@@ -155,6 +139,8 @@ class _DrinkList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     if (drinks.isEmpty) {
       return Center(
         child: Column(
@@ -163,32 +149,39 @@ class _DrinkList extends StatelessWidget {
             const Text('🍷', style: TextStyle(fontSize: 48)),
             const SizedBox(height: 12),
             Text(emptyMessage,
-                style:
-                    const TextStyle(color: Colors.white54, fontSize: 14)),
+                style: TextStyle(
+                    color: cs.onSurface.withValues(alpha: 0.5),
+                    fontSize: 14)),
             const SizedBox(height: 8),
-            const Text('Tap + to add one!',
-                style:
-                    TextStyle(color: Colors.white38, fontSize: 12)),
+            Text('Tap + to add one!',
+                style: TextStyle(
+                    color: cs.onSurface.withValues(alpha: 0.35),
+                    fontSize: 12)),
           ],
         ),
       );
     }
 
-    return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.78,
-      ),
-      itemCount: drinks.length,
-      itemBuilder: (context, i) => DrinkCard(
-        drink: drinks[i],
-        showDeleteButton: true,
-        onDelete: () => onDelete(drinks[i]),
-        onTap: () => onTap(drinks[i]),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cols = constraints.maxWidth < 500 ? 2 : constraints.maxWidth < 800 ? 3 : 4;
+        return GridView.builder(
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 80),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: cols,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 0.72,
+          ),
+          itemCount: drinks.length,
+          itemBuilder: (context, i) => DrinkCard(
+            drink: drinks[i],
+            showDeleteButton: true,
+            onDelete: () => onDelete(drinks[i]),
+            onTap: () => onTap(drinks[i]),
+          ),
+        );
+      },
     );
   }
 }

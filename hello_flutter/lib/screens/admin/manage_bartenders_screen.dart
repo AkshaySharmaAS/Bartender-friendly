@@ -26,15 +26,11 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setS) => AlertDialog(
-          backgroundColor: const Color(0xFF1E1E2E),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Row(
             children: [
               Text('🍹', style: TextStyle(fontSize: 20)),
               SizedBox(width: 8),
-              Text('Add Bartender',
-                  style: TextStyle(color: Colors.white, fontSize: 18)),
+              Text('Add Bartender'),
             ],
           ),
           content: Form(
@@ -52,7 +48,6 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
                 TextFormField(
                   controller: pwdCtrl,
                   obscureText: obscure,
-                  style: const TextStyle(color: Colors.white),
                   validator: (v) =>
                       v == null || v.length < 4 ? 'Min 4 characters' : null,
                   decoration: _inputDecoration(
@@ -61,7 +56,6 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
                     suffix: IconButton(
                       icon: Icon(
                           obscure ? Icons.visibility_off : Icons.visibility,
-                          color: Colors.white38,
                           size: 18),
                       onPressed: () => setS(() => obscure = !obscure),
                     ),
@@ -73,8 +67,7 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel',
-                  style: TextStyle(color: Colors.white54)),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -89,16 +82,10 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
                 context.read<UserManagementProvider>().addUser(user);
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('${user.name} added as bartender.'),
-                    backgroundColor: const Color(0xFF7B1FA2),
-                  ),
+                  SnackBar(content: Text('${user.name} added as bartender.')),
                 );
               },
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7B1FA2)),
-              child: const Text('Add',
-                  style: TextStyle(color: Colors.white)),
+              child: const Text('Add'),
             ),
           ],
         ),
@@ -110,35 +97,23 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E2E),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Remove Bartender',
-            style: TextStyle(color: Colors.white)),
-        content: Text(
-          'Remove ${user.name} from the team?',
-          style: const TextStyle(color: Colors.white70),
-        ),
+        title: const Text('Remove Bartender'),
+        content: Text('Remove ${user.name} from the team?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel',
-                style: TextStyle(color: Colors.white54)),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
               context.read<UserManagementProvider>().removeUser(user.id);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${user.name} removed.'),
-                  backgroundColor: Colors.red.shade800,
-                ),
+                SnackBar(content: Text('${user.name} removed.')),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Remove',
-                style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            child: const Text('Remove'),
           ),
         ],
       ),
@@ -147,6 +122,9 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Consumer<UserManagementProvider>(
@@ -160,17 +138,15 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
                 children: [
                   const Text('🍹', style: TextStyle(fontSize: 52)),
                   const SizedBox(height: 16),
-                  const Text('No bartenders yet',
-                      style:
-                          TextStyle(color: Colors.white54, fontSize: 16)),
-                  const SizedBox(height: 8),
+                  Text('No bartenders yet',
+                      style: TextStyle(
+                          color: cs.onSurface.withValues(alpha: 0.5),
+                          fontSize: 16)),
+                  const SizedBox(height: 12),
                   ElevatedButton.icon(
                     onPressed: () => _showAddDialog(context),
                     icon: const Icon(Icons.person_add),
                     label: const Text('Add Bartender'),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF7B1FA2),
-                        foregroundColor: Colors.white),
                   ),
                 ],
               ),
@@ -186,10 +162,21 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E1E2E),
+                  color: cs.surface,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                      color: const Color(0xFF7B1FA2).withValues(alpha: 0.3)),
+                  border: isDark
+                      ? Border.all(
+                          color: cs.primary.withValues(alpha: 0.3))
+                      : null,
+                  boxShadow: isDark
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          )
+                        ],
                 ),
                 child: Row(
                   children: [
@@ -197,7 +184,7 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF7B1FA2).withValues(alpha: 0.2),
+                        color: cs.primaryContainer,
                         shape: BoxShape.circle,
                       ),
                       child: const Center(
@@ -210,20 +197,21 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(b.name,
-                              style: const TextStyle(
-                                  color: Colors.white,
+                              style: TextStyle(
+                                  color: cs.onSurface,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14)),
                           const SizedBox(height: 2),
                           Text(b.email,
-                              style: const TextStyle(
-                                  color: Colors.white54, fontSize: 12)),
+                              style: TextStyle(
+                                  color: cs.onSurface.withValues(alpha: 0.5),
+                                  fontSize: 12)),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline,
-                          color: Colors.red, size: 22),
+                      icon: Icon(Icons.delete_outline,
+                          color: cs.error, size: 22),
                       onPressed: () => _confirmDelete(context, b),
                     ),
                   ],
@@ -235,10 +223,8 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddDialog(context),
-        backgroundColor: const Color(0xFF7B1FA2),
-        icon: const Icon(Icons.person_add, color: Colors.white),
-        label: const Text('Add Bartender',
-            style: TextStyle(color: Colors.white)),
+        icon: const Icon(Icons.person_add),
+        label: const Text('Add Bartender'),
       ),
     );
   }
@@ -253,9 +239,11 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
     return TextFormField(
       controller: ctrl,
       keyboardType: inputType,
-      style: const TextStyle(color: Colors.white),
       validator: validator,
-      decoration: _inputDecoration(label, icon),
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, size: 18),
+      ),
     );
   }
 
@@ -263,25 +251,8 @@ class _ManageBartendersScreenState extends State<ManageBartendersScreen> {
       {Widget? suffix}) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.white54),
-      prefixIcon: Icon(icon, color: Colors.white38, size: 18),
+      prefixIcon: Icon(icon, size: 18),
       suffixIcon: suffix,
-      filled: true,
-      fillColor: Colors.white.withValues(alpha: 0.05),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide:
-            BorderSide(color: Colors.white.withValues(alpha: 0.15)),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide:
-            BorderSide(color: Colors.white.withValues(alpha: 0.15)),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFF7B1FA2)),
-      ),
     );
   }
 }

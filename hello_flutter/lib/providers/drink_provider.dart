@@ -27,12 +27,21 @@ class DrinkProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    var stored = await _storage.getDrinks();
-    if (stored.isEmpty) {
-      stored = SeedData.popularDrinks;
-      await _storage.saveDrinks(stored);
+    // Re-seed if version changed (new images added)
+    final versionOk = await _storage.isDrinksVersionCurrent();
+    if (!versionOk) {
+      await _storage.saveDrinks(SeedData.popularDrinks);
+      await _storage.setDrinksVersion();
+      _drinks = SeedData.popularDrinks;
+    } else {
+      var stored = await _storage.getDrinks();
+      if (stored.isEmpty) {
+        stored = SeedData.popularDrinks;
+        await _storage.saveDrinks(stored);
+        await _storage.setDrinksVersion();
+      }
+      _drinks = stored;
     }
-    _drinks = stored;
 
     _isLoading = false;
     notifyListeners();

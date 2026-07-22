@@ -13,6 +13,7 @@ class Drink {
   final List<String> ingredients;
   final String recipe;
   final bool isPopular;
+  final String? imageUrl;
   final String? createdBy;
   final DateTime createdAt;
 
@@ -24,6 +25,7 @@ class Drink {
     required this.ingredients,
     required this.recipe,
     this.isPopular = false,
+    this.imageUrl,
     this.createdBy,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
@@ -36,6 +38,7 @@ class Drink {
         'ingredients': ingredients,
         'recipe': recipe,
         'isPopular': isPopular,
+        'imageUrl': imageUrl,
         'createdBy': createdBy,
         'createdAt': createdAt.toIso8601String(),
       };
@@ -51,6 +54,7 @@ class Drink {
         ingredients: List<String>.from(json['ingredients'] as List),
         recipe: json['recipe'] as String,
         isPopular: json['isPopular'] as bool? ?? false,
+        imageUrl: json['imageUrl'] as String?,
         createdBy: json['createdBy'] as String?,
         createdAt: DateTime.parse(json['createdAt'] as String),
       );
@@ -63,6 +67,7 @@ class Drink {
     List<String>? ingredients,
     String? recipe,
     bool? isPopular,
+    String? imageUrl,
     String? createdBy,
     DateTime? createdAt,
   }) =>
@@ -74,6 +79,7 @@ class Drink {
         ingredients: ingredients ?? this.ingredients,
         recipe: recipe ?? this.recipe,
         isPopular: isPopular ?? this.isPopular,
+        imageUrl: imageUrl ?? this.imageUrl,
         createdBy: createdBy ?? this.createdBy,
         createdAt: createdAt ?? this.createdAt,
       );
