@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../models/customer_request.dart';
@@ -15,20 +17,43 @@ class CustomerRequestsScreen extends StatefulWidget {
 class _CustomerRequestsScreenState extends State<CustomerRequestsScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabCtrl;
+  Timer? _refreshTimer;
+  int _lastPendingCount = 0;
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
     _tabCtrl = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<RequestProvider>().loadRequests();
+      _loadRequests();
     });
   }
 
   @override
   void dispose() {
+    _refreshTimer?.cancel();
     _tabCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadRequests() async {
+    final provider = context.read<RequestProvider>();
+    final before = _lastPendingCount;
+    await provider.loadRequests();
+    if (!mounted) return;
+    final current = provider.pendingRequests.length;
+    if (_initialized && current > before) {
+      SystemSound.play(SystemSoundType.alert);
+    }
+    _lastPendingCount = current;
+    if (!_initialized) {
+      _initialized = true;
+      _refreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+        if (!mounted) return;
+        _loadRequests();
+      });
+    }
   }
 
   void _showResponseDialog(
